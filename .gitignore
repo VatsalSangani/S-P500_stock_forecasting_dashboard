@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Data
+data/
+*.parquet
+*.csv
+
+# Env
+.env

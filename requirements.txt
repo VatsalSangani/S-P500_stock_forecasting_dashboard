@@ -1,0 +1,27 @@
+# requirements.txt
+
+# Data
+yfinance
+pandas
+numpy
+ta
+pyarrow      # for efficient data storage
+investpy
+yahooquery
+scikit-learn
+
+# Forecasting
+prophet
+cmdstanpy   # required backend for Prophet
+
+# Visualisation
+plotly
+streamlit
+
+# Utils
+requests
+beautifulsoup4   # if scraping FTSE100 tickers from Wikipedia
+lxml              # parser for bs4
+
+# Dev
+jupyterlab        # if you want notebooks for testing
