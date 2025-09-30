@@ -25,3 +25,6 @@ lxml              # parser for bs4
 
 # Dev
 jupyterlab        # if you want notebooks for testing
+
+botocore          # if using AWS services
+boto3             # if using AWS services

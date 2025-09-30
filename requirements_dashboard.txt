@@ -1,0 +1,6 @@
+streamlit
+pandas
+plotly
+pyarrow
+boto3
+prophet
