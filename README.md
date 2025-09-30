@@ -1,6 +1,6 @@
 # SP500 Stock Forecasting Pipeline
 
-A portfolio-style project for automated ETL, forecasting, and dashboarding of SP500 stocks using yfinance, Prophet, and Streamlit.
+A portfolio-style project for automated ETL, forecasting, and dashboarding of S&P500 stocks using yfinance, Prophet, and Streamlit.
 
 ## Structure
 
