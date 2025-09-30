@@ -48,27 +48,24 @@ This project automates the ETL pipeline (Extract → Transform → Load), genera
 ## 🏗️ Architecture
  ```mermaid
 flowchart TD
-    A[Local System\nUpload Data] -->|Raw + Fundamentals| B[S3 Bucket\n(sp500-dashboard-data)]
-    B --> C[EC2 Instance\n(Deployed with Docker)]
-    C -->|Fetches Data| B
-    GitHub[GitHub Actions\nCI/CD] -->|SSH + Docker Deploy| C
-    C --> D[Streamlit Dashboard\n:8502]
-    D --> User[(End User / Recruiter)]
+   A[Local System: Upload Data] -->|Raw + Fundamentals| B[S3 Bucket (sp500-dashboard-data)]
+   B --> C[EC2 Instance (Docker)]
+   C -->|Fetches Data| B
+   GitHub[GitHub Actions CI/CD] -->|SSH + Docker Deploy| C
+   C --> D[Streamlit Dashboard (Port 8502)]
+   D --> U[End User / Recruiter]
 
-    %% AWS S3
-    A4 -->|Upload| S3[(AWS S3<br/>sp500-dashboard-data)]
+   %% Deployment Pipeline
+   subgraph GitHubRepo[GitHub Repository + Actions]
+       G1[Push Code to main] --> G2[GitHub Actions Workflow]
+       G2 -->|Deploy via SSH| C
+   end
 
-    %% Deployment Pipeline
-    subgraph GitHub["🌐 GitHub Repo + Actions (CI/CD)"]
-        G1[Push Code to main] --> G2[GitHub Actions Workflow]
-        G2 -->|Deploy via SSH| EC2
-    end
+   %% EC2 & Dashboard
+   subgraph EC2Instance[AWS EC2 Instance]
+       B -->|Sync Data (sync_s3.sh)| E1[Dockerized Streamlit Dashboard]
+       E1 --> E2[Interactive Dashboard (8502)]
+   end
 
-    %% EC2 & Dashboard
-    subgraph EC2["⚡ AWS EC2 Instance"]
-        S3 -->|Sync Data (sync_s3.sh)| E1[Dockerized Streamlit Dashboard]
-        E1 --> E2[📊 Interactive Dashboard<br/>(8502 port)]
-    end
-
-    %% Users
-    U[👨‍💻 End Users / Recruiters] -->|Access via Browser| E2
+   %% Users
+   U -->|Access via Browser| E2
