@@ -36,15 +36,6 @@ This project automates the ETL pipeline (Extract → Transform → Load), genera
   - **AWS EC2 hosting**, **AWS S3 storage**
 
 ---
-
-## ⚙️ Tech Stack
-  - Languages: Python, Pandas, Plotly, Streamlit
-  - Data: yfinance / Yahooquery API
-  - Forecasting: Prophet
-  - Deployment: AWS EC2, AWS S3, Docker, GitHub Actions
-  - Orchestration: Bash scripts + CI/CD automation
-
----
 ## 🏗️ Architecture
 The following diagram illustrates the data flow and deployment architecture of the project:
 
@@ -94,3 +85,74 @@ The following diagram illustrates the data flow and deployment architecture of t
 
 ![Dashboard Demo 2](Flowchart%20and%20Demo%20Pictures/SP500Dashboard-gif2.gif)  
 *Prophet forecasts, fundamentals, and multi-ticker comparison*  
+
+
+---
+
+## Setup & Installation
+Clone the Repository:
+```
+git clone https://github.com/VatsalSangani/S-P500_stock_forecasting_dashboard.git
+cd S-P500_stock_forecasting_dashboard
+```
+
+Create and activate a virtual environment:
+```
+python -m venv venv
+source venv/bin/activate   # On Linux/Mac
+venv\Scripts\activate      # On Windows
+```
+
+Install Dependencies:
+```
+pip install -r requirements_dashboard.txt
+```
+
+Run the dashboard locally:
+```
+streamlit run app/app.py
+```
+
+---
+
+## ☁️ Deployment
+- Data Pipeline: Local ETL + Prophet forecasting → upload processed + forecast data to AWS S3.
+- Sync Script: EC2 instance uses scripts/sync_s3.sh to pull fresh data from S3.
+- CI/CD: GitHub Actions automatically deploys updates to EC2 using Docker.
+- Hosting: Streamlit dashboard runs in a container on EC2 (t3.micro) at port 8502.
+
+---
+
+## 🛠️ Future Improvements
+- Automate weekly pipeline using Apache Airflow or AWS Lambda + EventBridge.
+- Expand fundamentals with more financial ratios (ROE, Debt/Equity, etc.).
+- Introduce user authentication for role-based dashboards (analyst vs manager).
+- Optimize deployment using Kubernetes (k3s) + Terraform for production scaling.
+
+---
+
+## 📜 License
+This project is licensed under the **MIT License** – you are free to use, modify, and distribute it with attribution.  
+*(For academic and educational purposes only – not intended for financial trading or investment advice.)*
+
+---
+
+## 🤝 Acknowledgements
+- [Streamlit](https://streamlit.io/) – for building interactive dashboards  
+- [Plotly](https://plotly.com/) – for beautiful charts and candlesticks  
+- [yFinance](https://pypi.org/project/yfinance/) – for stock price data  
+- [Alpha Vantage](https://www.alphavantage.co/) – for fundamentals & indicators  
+- [Facebook Prophet](https://facebook.github.io/prophet/) – for time-series forecasting  
+- [AWS](https://aws.amazon.com/) – EC2 & S3 infrastructure  
+- [GitHub Actions](https://github.com/features/actions) – CI/CD automation  
+
+---
+
+## 📬 Contact
+👤 **Vatsal Sangani**  
+- GitHub: [VatsalSangani](https://github.com/VatsalSangani)  
+- LinkedIn: [Your LinkedIn Profile](https://www.linkedin.com/in/vats-sangani/)    
+
+If you found this project useful, feel free to ⭐ the repo and connect with me!
+
+---
