@@ -37,14 +37,13 @@ The system combines **ETL, forecasting, fundamentals, and interactive dashboards
 ---
 ## 🏗️ Architecture
  ```mermaid
- flowchart TD
-
-    %% Local ETL Pipeline
-    subgraph Local["🖥️ Local Machine / Data Prep"]
-        A1[Extract Raw Data<br/>(Yahoo Finance API)] --> A2[Transform Data<br/>(Indicators: EMA, VWAP, RSI, ATR)]
-        A2 --> A3[Forecasting<br/>(Prophet 7-day Forecast)]
-        A3 --> A4[Upload Processed + Forecasted Data]
-    end
+flowchart TD
+    A[Local System\nUpload Data] -->|Raw + Fundamentals| B[S3 Bucket\n(sp500-dashboard-data)]
+    B --> C[EC2 Instance\n(Deployed with Docker)]
+    C -->|Fetches Data| B
+    GitHub[GitHub Actions\nCI/CD] -->|SSH + Docker Deploy| C
+    C --> D[Streamlit Dashboard\n:8502]
+    D --> User[(End User / Recruiter)]
 
     %% AWS S3
     A4 -->|Upload| S3[(AWS S3<br/>sp500-dashboard-data)]
