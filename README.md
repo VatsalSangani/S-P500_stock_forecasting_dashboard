@@ -46,26 +46,11 @@ This project automates the ETL pipeline (Extract → Transform → Load), genera
 
 ---
 ## 🏗️ Architecture
- ```mermaid
-flowchart TD
-   A[Local System: Upload Data] -->|Raw + Fundamentals| B[S3 Bucket (sp500-dashboard-data)]
-   B --> C[EC2 Instance (Docker)]
-   C -->|Fetches Data| B
-   GitHub[GitHub Actions CI/CD] -->|SSH + Docker Deploy| C
-   C --> D[Streamlit Dashboard (Port 8502)]
-   D --> U[End User / Recruiter]
+The following diagram illustrates the data flow and deployment architecture of the project:
 
-   %% Deployment Pipeline
-   subgraph GitHubRepo[GitHub Repository + Actions]
-       G1[Push Code to main] --> G2[GitHub Actions Workflow]
-       G2 -->|Deploy via SSH| C
-   end
+![Architecture](Flowchart%20and%20Demo%20Pictures/Architecture_of_Project.png)
 
-   %% EC2 & Dashboard
-   subgraph EC2Instance[AWS EC2 Instance]
-       B -->|Sync Data (sync_s3.sh)| E1[Dockerized Streamlit Dashboard]
-       E1 --> E2[Interactive Dashboard (8502)]
-   end
+---
 
-   %% Users
-   U -->|Access via Browser| E2
+## Demo
+
