@@ -1,4 +1,4 @@
-# app/app.py
+# app/app.py for main dashboard
 
 import streamlit as st
 import pandas as pd
