@@ -20,7 +20,7 @@ jobs:
 
     - name: 🚀 Deploy to EC2
       run: |
-        ssh -tt -o StrictHostKeyChecking=no deploy@13.42.17.17<< 'EOF'
+        ssh -tt -o StrictHostKeyChecking=no deploy@13.42.17.17 << 'EOF'
           cd ~/SP500_Dashboard || mkdir -p ~/SP500_Dashboard && cd ~/SP500_Dashboard
           
           echo "⬇️ Pulling latest code..."
@@ -30,7 +30,11 @@ jobs:
           else
             git clone https://github.com/VatsalSangani/SP500_stock_forecasting_dashboard.git .
           fi
-          
+
+          echo "🔄 Syncing latest data from S3..."
+          chmod +x scripts/sync_s3.sh
+          ./scripts/sync_s3.sh
+
           echo "🧹 Stopping and removing previous dashboard container..."
           docker stop sp500-app 2>/dev/null || true
           docker rm sp500-app 2>/dev/null || true
