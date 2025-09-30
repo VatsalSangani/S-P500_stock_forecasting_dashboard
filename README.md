@@ -1,7 +1,17 @@
 # 📊 S&P 500 Stock Forecasting Dashboard
 
-An end-to-end **data engineering + data science pipeline** for analyzing and forecasting the **S&P 500 index companies**.  
-The system combines **ETL, forecasting, fundamentals, and interactive dashboards**, deployed on **AWS EC2** with **S3 as storage** and **Docker + GitHub Actions for CI/CD**.
+## 🚀 Introduction
+The S&P 500 Stock Forecasting & Insights Dashboard is a complete end-to-end data pipeline and visualization platform designed to deliver stock insights, forecasts, and financial metrics for companies in the S&P 500 index.
+This project automates the ETL pipeline (Extract → Transform → Load), generates time-series forecasts using machine learning, and provides an interactive dashboard for exploring stock performance, technical indicators, fundamentals, and predictions.
+
+## ✨ Key Highlights
+
+- End-to-end pipeline from data ingestion → processing → forecasting → dashboard.
+- Technical + fundamental analysis combined in one platform.
+- 7-day Prophet forecasts with confidence intervals.
+- Weekly refresh from AWS S3 → EC2 without manual intervention.
+- Dockerized deployment with GitHub Actions for continuous integration.
+
 
 ---
 
