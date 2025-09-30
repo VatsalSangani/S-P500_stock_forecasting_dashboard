@@ -3,4 +3,5 @@ pandas
 plotly
 pyarrow
 boto3
-yahooquery
+matplotlib
+seaborn
