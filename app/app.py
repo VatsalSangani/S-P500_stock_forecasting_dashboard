@@ -1,5 +1,3 @@
-# app/app.py for main dashboard
-
 import streamlit as st
 import pandas as pd
 import plotly.graph_objs as go
@@ -11,7 +9,7 @@ from pipeline.config_sp500 import SP500_COMPANIES
 
 PROCESSED_DIR = "data/processed"
 FORECAST_DIR = "data/forecasts"
-FUNDAMENTALS_FILE = "data/fundamentals/fundamentals.parquet"
+FUNDAMENTALS_PATH = "data/fundamentals/fundamentals.parquet"
 
 # ------------------------
 # Utility Functions
@@ -30,12 +28,15 @@ def load_forecast_data(ticker):
         return None
     return pd.read_csv(path, parse_dates=["ds"])
 
-def load_fundamentals():
-    """Load fundamentals dataset (parquet)."""
-    if os.path.exists(FUNDAMENTALS_FILE):
-        return pd.read_parquet(FUNDAMENTALS_FILE)
-    return None
-
+def get_fundamentals(ticker: str):
+    """Fetch fundamentals for a given ticker from the parquet file."""
+    if not os.path.exists(FUNDAMENTALS_PATH):
+        return None
+    fundamentals_df = pd.read_parquet(FUNDAMENTALS_PATH)
+    record = fundamentals_df[fundamentals_df["Ticker"] == ticker]
+    if record.empty:
+        return None
+    return record.to_dict("records")[0]
 
 # ------------------------
 # Streamlit Setup
@@ -56,7 +57,6 @@ selected_label = st.sidebar.selectbox("Select a Company", sorted(ticker_labels.v
 ticker = [t for t, lbl in ticker_labels.items() if lbl == selected_label][0]
 
 df = load_ticker_data(ticker)
-fundamentals_df = load_fundamentals()
 
 if df is not None:
     # ------------------------
@@ -79,7 +79,6 @@ if df is not None:
         ["📈 Price & Indicators", "📊 Performance Summary", "🔮 Forecast", "📊 Multi-Ticker Comparison"]
     )
 
-    
     # ---- Tab 1: Price, Indicators & Fundamentals ----
     with tab1:
         st.write("### Interactive Technical Chart")
@@ -131,28 +130,22 @@ if df is not None:
         # ------------------------
         st.write("### 📊 Fundamentals Snapshot")
 
-        if fundamentals_df is not None and ticker in fundamentals_df.index:
-            row = fundamentals_df.loc[ticker]
+        fundamentals = get_fundamentals(ticker)
 
-            fundamentals = {
-                "PE Ratio": row.get("PE_Ratio", "N/A"),
-                "EPS": row.get("EPS", "N/A"),
-                "Dividend Yield": row.get("Dividend_Yield", "N/A"),
-                "Market Cap": row.get("Market_Cap", "N/A"),
-                "Sector PE": row.get("Sector_PE", "N/A"),
-            }
-
+        if fundamentals:
             col1, col2, col3, col4 = st.columns(4)
 
-            # P/E Ratio with sector benchmark
-            pe_color = "green" if fundamentals["PE Ratio"] != "N/A" and fundamentals["Sector PE"] != "N/A" and fundamentals["PE Ratio"] < fundamentals["Sector PE"] else "red"
-            col1.metric("P/E Ratio", fundamentals["PE Ratio"], f"vs Sector {fundamentals['Sector PE']}")
-            col2.metric("EPS", fundamentals["EPS"])
-            col3.metric("Dividend Yield", fundamentals["Dividend Yield"])
-            col4.metric("Market Cap", fundamentals["Market Cap"])
+            col1.metric("P/E Ratio", f"{fundamentals['PE_Ratio']:.2f}")
+            col2.metric("EPS", f"{fundamentals['EPS']:.2f}")
+            col3.metric("Dividend Yield", f"{fundamentals['Dividend_Yield']}")
+            col4.metric("Market Cap", f"{fundamentals['Market_Cap'] / 1e9:.2f} B")
+
+            col1.metric("Forward PE", f"{fundamentals['Forward_PE']:.2f}")
+            col2.metric("Beta", f"{fundamentals['Beta']:.2f}")
+            col3.metric("52W High", f"${fundamentals['52W_High']:.2f}")
+            col4.metric("52W Low", f"${fundamentals['52W_Low']:.2f}")
         else:
             st.warning("No fundamentals available for this company.")
-
 
     # ---- Tab 2: Performance Summary ----
     with tab2:
@@ -174,14 +167,37 @@ if df is not None:
 
         if forecast_df is not None:
             fig_fc = go.Figure()
-            fig_fc.add_trace(go.Scatter(x=df.index, y=df["Close"], name="Historical", line=dict(color="blue")))
-            fig_fc.add_trace(go.Scatter(x=forecast_df["ds"], y=forecast_df["yhat"], mode="lines+markers", name="Forecast", line=dict(color="red")))
+
+            # Historical data
+            fig_fc.add_trace(go.Scatter(
+                x=df.index,
+                y=df["Close"],
+                name="Historical",
+                line=dict(color="blue"),
+                hovertemplate="Date=%{x|%Y-%m-%d}<br>Close=%{y:.2f}<extra></extra>"
+            ))
+
+            # Forecast line + markers
+            fig_fc.add_trace(go.Scatter(
+                x=forecast_df["ds"],
+                y=forecast_df["yhat"],
+                mode="lines+markers",
+                name="Forecast",
+                line=dict(color="red"),
+                hovertemplate="Date=%{x|%Y-%m-%d}<br>Forecast=%{y:.2f}<extra></extra>"
+            ))
+
+            # Confidence interval shading
             fig_fc.add_trace(go.Scatter(
                 x=pd.concat([forecast_df["ds"], forecast_df["ds"][::-1]]),
                 y=pd.concat([forecast_df["yhat_upper"], forecast_df["yhat_lower"][::-1]]),
-                fill="toself", fillcolor="rgba(255,0,0,0.2)", line=dict(color="rgba(255,255,255,0)"),
-                name="Confidence Interval", hoverinfo="skip"
+                fill="toself",
+                fillcolor="rgba(255,0,0,0.2)",
+                line=dict(color="rgba(255,255,255,0)"),
+                name="Confidence Interval",
+                hoverinfo="skip"
             ))
+
             fig_fc.update_layout(height=400, xaxis_title="Date", yaxis_title="Price", showlegend=True)
             st.plotly_chart(fig_fc, use_container_width=True)
         else:
@@ -214,6 +230,7 @@ if df is not None:
             compare_fig.update_layout(height=500, title="Normalized Price Performance (rebased to 100)")
             st.plotly_chart(compare_fig, use_container_width=True)
 
+            # Bar chart of returns
             returns = {ticker_labels.get(t, t): (d["Close"].iloc[-1] / d["Close"].iloc[0] - 1) * 100 for t, d in data_dict.items()}
             returns_df = pd.DataFrame.from_dict(returns, orient="index", columns=["Return %"]).sort_values("Return %", ascending=False)
 
