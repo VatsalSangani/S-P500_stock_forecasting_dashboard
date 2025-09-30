@@ -39,6 +39,10 @@ jobs:
           docker stop sp500-app 2>/dev/null || true
           docker rm sp500-app 2>/dev/null || true
           
+          echo "🧹 Freeing port 8502 if already in use..."
+          docker ps -q --filter "publish=8502" | xargs -r docker stop
+          docker ps -aq --filter "publish=8502" | xargs -r docker rm
+          
           echo "🧹 Removing previous dashboard image..."
           docker rmi -f sp500-dashboard:latest 2>/dev/null || true
           
