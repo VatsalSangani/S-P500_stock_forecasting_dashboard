@@ -80,6 +80,8 @@ The following diagram illustrates the data flow and deployment architecture of t
 ### 🚀 Live Dashboard  
 🔗 [Click here to explore the live S&P 500 Dashboard](http://13.42.17.17:8502/)  
 
+> ⚠️ **Note:** The dashboard is hosted on an AWS EC2 instance. It may take a few seconds to load or could be offline outside active hours.  
+
 ### 🌐 System Architecture  
 ![Architecture](Flowchart%20and%20Demo%20Pictures/Architecture_of_Project.png)  
 
