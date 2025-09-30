@@ -52,5 +52,43 @@ The following diagram illustrates the data flow and deployment architecture of t
 
 ---
 
-## Demo
+## ⚙️ Tech Stack
 
+**Languages & Libraries**
+- Python (Pandas, NumPy, Plotly, Streamlit, Prophet)
+- Matplotlib (for visualization styles)
+- PyArrow / Parquet (efficient storage)
+
+**Machine Learning & Forecasting**
+- Facebook Prophet (time series forecasting)
+- Technical indicators (EMA, VWAP, RSI, ATR)
+
+**Data Storage & Cloud**
+- AWS S3 (data lake for processed + forecasted data)
+- AWS EC2 (hosting the dashboard)
+- IAM Roles & Policies (secure access)
+
+**DevOps & Deployment**
+- Docker (containerized app for reproducibility)
+- GitHub Actions (CI/CD pipeline: auto-deploy to EC2)
+- Bash (sync scripts, automation)
+
+---
+
+## 🎥 Demo  
+
+### 🚀 Live Dashboard  
+🔗 [Click here to explore the live S&P 500 Dashboard](http://13.42.17.17:8502/)  
+
+### 🌐 System Architecture  
+![Architecture](Flowchart%20and%20Demo%20Pictures/Architecture_of_Project.png)  
+
+### 🖼️ Dashboard Screenshots  
+![Demo Screenshot](Flowchart%20and%20Demo%20Pictures/Demo1.png)  
+
+### 🎬 Dashboard in Action  
+![Dashboard Demo 1](Flowchart%20and%20Demo%20Pictures/SP500Dashboard-gif1.gif)  
+*Candlestick charts, EMA, VWAP, RSI, ATR indicators*  
+
+![Dashboard Demo 2](Flowchart%20and%20Demo%20Pictures/SP500Dashboard-gif2.gif)  
+*Prophet forecasts, fundamentals, and multi-ticker comparison*  
