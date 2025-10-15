@@ -45,7 +45,7 @@ jobs:
           docker build -f Dockerfile -t sp500-dashboard:latest .
 
           echo "🚀 Running new Docker container..."
-          docker run -d -p 8502:8501 --name sp500-app \
+          docker run -d -p 8503:8501 --name sp500-app \
             -e AWS_DEFAULT_REGION=eu-west-2 \
             sp500-dashboard:latest
 
@@ -56,4 +56,4 @@ jobs:
       run: |
         echo "Waiting 15s for app to start..."
         sleep 15
-        curl -f http://13.42.17.17:8502 || exit 1
+        curl -f http://13.42.17.17:8503 || exit 1
